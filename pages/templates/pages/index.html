@@ -1,100 +1,54 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CookBook - Книга рецептов</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+{% extends 'pages/base.html' %}
 
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="#">🍳 CookBook</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Главная</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Категории</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Войти</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+{% block title %}Главная - CookBook{% endblock %}
 
-    <main>
-        <section class="bg-light py-5 text-center">
-            <div class="container">
-                <h1 class="display-4">Добро пожаловать в CookBook</h1>
-                <p class="lead">Твой личный сервис для создания и хранения лучших рецептов.</p>
-                <a href="#" class="btn btn-primary btn-lg">Начать готовить</a>
-            </div>
-        </section>
-
-        <section class="container my-5">
-            <h2 class="text-center mb-4">Популярные рецепты</h2>
-            <div class="row">
-                
-                <!-- Карточка 1 -->
-                <div class="col-12 col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="https://placehold.co/400x250" class="card-img-top" alt="Паста карбонара">
-                        <div class="card-body">
-                            <h5 class="card-title">Паста Карбонара</h5>
-                            <p class="card-text">Классическая итальянская паста с беконом, яйцом и пармезаном. Готовится за 15 минут.</p>
-                            <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Карточка 2 -->
-                <div class="col-12 col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="https://placehold.co/400x250" class="card-img-top" alt="Борщ">
-                        <div class="card-body">
-                            <h5 class="card-title">Классический борщ</h5>
-                            <p class="card-text">Наваристый борщ со свеклой, капустой и мясом. Подавайте со сметаной и зеленью.</p>
-                            <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Карточка 3 -->
-                <div class="col-12 col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="https://placehold.co/400x250" class="card-img-top" alt="Тирамису">
-                        <div class="card-body">
-                            <h5 class="card-title">Тирамису</h5>
-                            <p class="card-text">Нежный итальянский десерт с маскарпоне, кофе и какао. Без выпечки!</p>
-                            <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-dark text-white text-center py-4">
+{% block content %}
+    <!-- ГЕРОЙ (HERO SECTION) -->
+    <section class="bg-light py-5 text-center">
         <div class="container">
-            <p class="mb-2">© 2026 CookBook — Делимся вкусом</p>
-            <p class="mb-0">
-                <a href="#" class="text-white me-3">📷 Instagram</a>
-                <a href="#" class="text-white me-3">📘 Facebook</a>
-                <a href="#" class="text-white">🐦 Twitter</a>
-            </p>
+            <h1 class="display-4">{{ welcome_text }}</h1>
+            <p class="lead">{{ description }}</p>
+            <a href="#" class="btn btn-primary btn-lg">{{ button_text }}</a>
         </div>
-    </footer>
+    </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <!-- СЕТКА КАРТОЧЕК -->
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Популярные рецепты</h2>
+        <div class="row">
+            
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="https://placehold.co/400x250" class="card-img-top" alt="Паста">
+                    <div class="card-body">
+                        <h5 class="card-title">Паста Карбонара</h5>
+                        <p class="card-text">Классическая итальянская паста с беконом, яйцом и пармезаном.</p>
+                        <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="https://placehold.co/400x250" class="card-img-top" alt="Борщ">
+                    <div class="card-body">
+                        <h5 class="card-title">Классический борщ</h5>
+                        <p class="card-text">Наваристый борщ со свеклой, капустой и мясом.</p>
+                        <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="https://placehold.co/400x250" class="card-img-top" alt="Тирамису">
+                    <div class="card-body">
+                        <h5 class="card-title">Тирамису</h5>
+                        <p class="card-text">Нежный итальянский десерт с маскарпоне, кофе и какао.</p>
+                        <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
