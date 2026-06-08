@@ -1,0 +1,48 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}{{ recipe.title }} - CookBook{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← Назад к рецептам</a>
+            
+            <h1 class="mb-4">{{ recipe.title }}</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="text-muted">⏱️ Время приготовления: {{ recipe.cooking_time }} минут</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>📝 Описание</h4>
+                </div>
+                <div class="card-body">
+                    <p>{{ recipe.description }}</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>🛒 Ингредиенты</h4>
+                </div>
+                <div class="card-body">
+                    <p>{{ recipe.ingredients|linebreaks }}</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>🍳 Приготовление</h4>
+                </div>
+                <div class="card-body">
+                    <p>{{ recipe.instructions|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
