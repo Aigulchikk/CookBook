@@ -1,14 +1,31 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Recipe
 
-def index(request):
+def index(request, category_slug=None):
     recipes = Recipe.objects.all().order_by('-created_at')
+    current_category = None
+
+    if category_slug:
+        if category_slug == 'salad':
+            recipes = recipes.filter(category='salad')
+            current_category = '🥗 Салаты'
+        elif category_slug == 'soup':
+            recipes = recipes.filter(category='soup')
+            current_category = '🍲 Супы'
+        elif category_slug == 'main':
+            recipes = recipes.filter(category='main')
+            current_category = '🍝 Горячее'
+        elif category_slug == 'dessert':
+            recipes = recipes.filter(category='dessert')
+            current_category = '🍰 Десерты'
+
     context = {
         'welcome_text': 'Добро пожаловать в CookBook',
         'description': 'Твой личный сервис для создания и хранения лучших рецептов.',
         'button_text': 'Начать готовить',
         'year': 2026,
         'recipes': recipes,
+        'current_category': current_category,
     }
     return render(request, 'pages/index.html', context)
 
