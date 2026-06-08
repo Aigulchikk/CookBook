@@ -3,52 +3,73 @@
 {% block title %}Главная - CookBook{% endblock %}
 
 {% block content %}
-    <!-- ГЕРОЙ (HERO SECTION) -->
+    <!-- ГЕРОЙ -->
     <section class="bg-light py-5 text-center">
         <div class="container">
             <h1 class="display-4">{{ welcome_text }}</h1>
             <p class="lead">{{ description }}</p>
-            <a href="#" class="btn btn-primary btn-lg">{{ button_text }}</a>
+            <a href="#recipes" class="btn btn-primary btn-lg">{{ button_text }}</a>
         </div>
     </section>
 
-    <!-- СЕТКА КАРТОЧЕК -->
-    <section class="container my-5">
-        <h2 class="text-center mb-4">Популярные рецепты</h2>
+    <!-- БЛОК ФИЛЬТРАЦИИ -->
+    <div class="container my-4">
+        <div class="text-center">
+            <div class="btn-group flex-wrap" role="group">
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary m-1">📋 Все рецепты</a>
+                <a href="{% url 'category' 'salad' %}" class="btn btn-outline-success m-1">🥗 Салаты</a>
+                <a href="{% url 'category' 'soup' %}" class="btn btn-outline-warning m-1">🍲 Супы</a>
+                <a href="{% url 'category' 'main' %}" class="btn btn-outline-danger m-1">🍝 Горячее</a>
+                <a href="{% url 'category' 'dessert' %}" class="btn btn-outline-info m-1">🍰 Десерты</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАГОЛОВОК ТЕКУЩЕЙ КАТЕГОРИИ -->
+    {% if current_category %}
+    <div class="container text-center">
+        <h3 class="mb-4">{{ current_category }}</h3>
+    </div>
+    {% endif %}
+
+    <!-- СЕТКА КАРТОЧЕК ИЗ БАЗЫ ДАННЫХ -->
+    <section id="recipes" class="container my-5">
+        <h2 class="text-center mb-4">Наши рецепты</h2>
         <div class="row">
-            
+            {% for recipe in recipes %}
             <div class="col-12 col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="https://placehold.co/400x250" class="card-img-top" alt="Паста">
+                <div class="card h-100 
+                    {% if recipe.category == 'salad' %}border-success border-3
+                    {% elif recipe.category == 'soup' %}border-warning border-3
+                    {% elif recipe.category == 'main' %}border-danger border-3
+                    {% elif recipe.category == 'dessert' %}border-info border-3
+                    {% endif %}
+                ">
+                    <img src="https://placehold.co/400x250" class="card-img-top" alt="{{ recipe.title }}">
                     <div class="card-body">
-                        <h5 class="card-title">Паста Карбонара</h5>
-                        <p class="card-text">Классическая итальянская паста с беконом, яйцом и пармезаном.</p>
-                        <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
+                        <h5 class="card-title">{{ recipe.title }}</h5>
+                        <p class="card-text">{{ recipe.description|truncatewords:15 }}</p>
+                        <p class="text-muted small">⏱️ {{ recipe.cooking_time }} мин</p>
+                        <span class="badge 
+                            {% if recipe.category == 'salad' %}bg-success
+                            {% elif recipe.category == 'soup' %}bg-warning text-dark
+                            {% elif recipe.category == 'main' %}bg-danger
+                            {% elif recipe.category == 'dessert' %}bg-info text-dark
+                            {% endif %}
+                        ">
+                            {{ recipe.get_category_display }}
+                        </span>
+                        <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-outline-primary mt-2 d-block">Читать рецепт</a>
                     </div>
                 </div>
             </div>
-
-            <div class="col-12 col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="https://placehold.co/400x250" class="card-img-top" alt="Борщ">
-                    <div class="card-body">
-                        <h5 class="card-title">Классический борщ</h5>
-                        <p class="card-text">Наваристый борщ со свеклой, капустой и мясом.</p>
-                        <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
-                    </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    Рецептов пока нет. Добавьте первый через админку!
                 </div>
             </div>
-
-            <div class="col-12 col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="https://placehold.co/400x250" class="card-img-top" alt="Тирамису">
-                    <div class="card-body">
-                        <h5 class="card-title">Тирамису</h5>
-                        <p class="card-text">Нежный итальянский десерт с маскарпоне, кофе и какао.</p>
-                        <a href="#" class="btn btn-outline-primary">Читать рецепт</a>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </section>
 {% endblock %}
