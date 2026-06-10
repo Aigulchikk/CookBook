@@ -56,6 +56,9 @@
                         <h5 class="card-title">{{ recipe.title }}</h5>
                         <p class="card-text">{{ recipe.description|truncatewords:15 }}</p>
                         <p class="text-muted small">⏱️ {{ recipe.cooking_time }} мин</p>
+                        {% if recipe.author %}
+                            <p class="text-muted small">👨‍🍳 {{ recipe.author.username }}</p>
+                        {% endif %}
                         <span class="badge 
                             {% if recipe.category == 'salad' %}bg-success
                             {% elif recipe.category == 'soup' %}bg-warning text-dark

@@ -2,6 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Recipe
 from .forms import FeedbackForm, RecipeForm
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
 def index(request, category_slug=None):
     recipes = Recipe.objects.all().order_by('-created_at')
@@ -65,19 +70,27 @@ def contact(request):
     
     return render(request, 'pages/contact.html', {'form': form})
 
+@login_required
 def recipe_create(request):
     if request.method == 'POST':
         form = RecipeForm(request.POST)
         if form.is_valid():
-            recipe = form.save()
+            recipe = form.save(commit=False)
+            recipe.author = request.user  # 👈 добавить
+            recipe.save()
             return redirect('recipe_detail', recipe_id=recipe.id)
     else:
         form = RecipeForm()
     
     return render(request, 'pages/recipe_form.html', {'form': form, 'title': '➕ Добавление рецепта'})
 
+@login_required
 def recipe_edit(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
+
+    if recipe.author != request.user:
+        messages.error(request, 'Вы можете редактировать только свои рецепты!')
+        return redirect('recipe_detail', recipe_id=recipe.id)
     
     if request.method == 'POST':
         form = RecipeForm(request.POST, instance=recipe)
@@ -88,3 +101,12 @@ def recipe_edit(request, recipe_id):
         form = RecipeForm(instance=recipe)
     
     return render(request, 'pages/recipe_form.html', {'form': form, 'title': '✏️ Редактирование рецепта'})
+
+class RegisterView(CreateView):
+    template_name = 'registration/register.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+
+def custom_logout(request):
+    logout(request)
+    return redirect('home')

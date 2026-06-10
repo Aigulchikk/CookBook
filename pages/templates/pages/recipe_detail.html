@@ -20,6 +20,9 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <p class="text-muted">⏱️ Время приготовления: {{ recipe.cooking_time }} минут</p>
+                    {% if recipe.author %}
+                        <p class="text-muted">👨‍🍳 Автор: {{ recipe.author.username }}</p>
+                    {% endif %}
                 </div>
             </div>
             

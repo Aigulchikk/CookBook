@@ -24,8 +24,27 @@
                             <a class="nav-link" href="{% url 'about' %}">О нас</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'contact' %}">📧 Контакты</a>
+                            <a class="nav-link" href="{% url 'contact' %}">Контакты</a>
                         </li>
+                        
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <span class="nav-link text-success">👋 Привет, {{ user.username }}</span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="nav-link btn btn-link" style="display: inline; border: none; background: none; color: rgba(255,255,255,.55);">🚪 Выйти</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">🔐 Войти</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'register' %}">📝 Регистрация</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
