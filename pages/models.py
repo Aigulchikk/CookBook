@@ -15,6 +15,7 @@ class Recipe(models.Model):
     cooking_time = models.IntegerField(verbose_name="Время приготовления (мин)", default=30)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     category = models.CharField(max_length=10, choices=Category.choices, default=Category.MAIN, verbose_name="Категория")
+    image_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="URL изображения")
 
     def __str__(self):
         return self.title

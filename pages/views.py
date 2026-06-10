@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from .models import Recipe
+from .forms import FeedbackForm
 
 def index(request, category_slug=None):
     recipes = Recipe.objects.all().order_by('-created_at')
@@ -44,3 +46,21 @@ def recipe_detail(request, recipe_id):
         'recipe': recipe,
     }
     return render(request, 'pages/recipe_detail.html', context)
+
+def contact(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            print("=" * 50)
+            print("НОВОЕ СООБЩЕНИЕ ИЗ ФОРМЫ ОБРАТНОЙ СВЯЗИ")
+            print(f"Тема: {form.cleaned_data['subject']}")
+            print(f"Email: {form.cleaned_data['email']}")
+            print(f"Сообщение: {form.cleaned_data['message']}")
+            print("=" * 50)
+            
+            messages.success(request, '✅ Ваше сообщение отправлено! Спасибо!')
+            return redirect('home')
+    else:
+        form = FeedbackForm(initial={'email': 'cookbook@example.com'})
+    
+    return render(request, 'pages/contact.html', {'form': form})

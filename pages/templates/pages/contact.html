@@ -1,0 +1,45 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Контакты - CookBook{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="text-center mb-4">📧 Свяжитесь с нами</h1>
+            <p class="text-center text-muted mb-5">Есть вопросы или предложения? Напишите нам!</p>
+            
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_subject" class="form-label">Тема</label>
+                            {{ form.subject }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_message" class="form-label">Сообщение</label>
+                            {{ form.message }}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">📤 Отправить сообщение</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary">← Вернуться на главную</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

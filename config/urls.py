@@ -24,4 +24,5 @@ urlpatterns = [
     path('category/<slug:category_slug>/', views.index, name='category'),
     path('about/', views.about, name='about'),
     path('recipe/<int:recipe_id>/', views.recipe_detail, name='recipe_detail'),
+    path('contact/', views.contact, name='contact'),
 ]

@@ -45,7 +45,7 @@
                     {% elif recipe.category == 'dessert' %}border-info border-3
                     {% endif %}
                 ">
-                    <img src="https://placehold.co/400x250" class="card-img-top" alt="{{ recipe.title }}">
+                    <img src="{% if recipe.image_url %}{{ recipe.image_url }}{% else %}https://placehold.co/400x250?text={{ recipe.title|urlencode }}{% endif %}" class="card-img-top" alt="{{ recipe.title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ recipe.title }}</h5>
                         <p class="card-text">{{ recipe.description|truncatewords:15 }}</p>
