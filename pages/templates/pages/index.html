@@ -25,6 +25,12 @@
         </div>
     </div>
 
+    <div class="container mb-4">
+        <div class="text-end">
+            <a href="{% url 'recipe_create' %}" class="btn btn-success">➕ Добавить рецепт</a>
+        </div>
+    </div>
+
     <!-- ЗАГОЛОВОК ТЕКУЩЕЙ КАТЕГОРИИ -->
     {% if current_category %}
     <div class="container text-center">

@@ -1,4 +1,5 @@
 from django import forms
+from .models import Recipe
 
 class FeedbackForm(forms.Form):
     subject = forms.CharField(
@@ -14,3 +15,17 @@ class FeedbackForm(forms.Form):
         label='Сообщение',
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Напишите ваше сообщение здесь...'})
     )
+
+class RecipeForm(forms.ModelForm):
+    class Meta:
+        model = Recipe
+        fields = ['title', 'description', 'ingredients', 'instructions', 'cooking_time', 'category', 'image_url']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'ingredients': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'instructions': forms.Textarea(attrs={'class': 'form-control', 'rows': 8}),
+            'cooking_time': forms.NumberInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'image_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://...'}),
+        }

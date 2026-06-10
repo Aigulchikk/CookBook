@@ -6,7 +6,10 @@
 <section class="container my-5">
     <div class="row">
         <div class="col-12">
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← Назад к рецептам</a>
+            <div class="mb-4">
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary">← Назад к рецептам</a>
+                <a href="{% url 'recipe_edit' recipe.id %}" class="btn btn-outline-primary ms-2">✏️ Редактировать</a>
+            </div>
             
             {% if recipe.image_url %}
                 <img src="{{ recipe.image_url }}" class="img-fluid rounded mb-4" alt="{{ recipe.title }}">

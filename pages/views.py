@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Recipe
-from .forms import FeedbackForm
+from .forms import FeedbackForm, RecipeForm
 
 def index(request, category_slug=None):
     recipes = Recipe.objects.all().order_by('-created_at')
@@ -64,3 +64,27 @@ def contact(request):
         form = FeedbackForm(initial={'email': 'cookbook@example.com'})
     
     return render(request, 'pages/contact.html', {'form': form})
+
+def recipe_create(request):
+    if request.method == 'POST':
+        form = RecipeForm(request.POST)
+        if form.is_valid():
+            recipe = form.save()
+            return redirect('recipe_detail', recipe_id=recipe.id)
+    else:
+        form = RecipeForm()
+    
+    return render(request, 'pages/recipe_form.html', {'form': form, 'title': '➕ Добавление рецепта'})
+
+def recipe_edit(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    
+    if request.method == 'POST':
+        form = RecipeForm(request.POST, instance=recipe)
+        if form.is_valid():
+            form.save()
+            return redirect('recipe_detail', recipe_id=recipe.id)
+    else:
+        form = RecipeForm(instance=recipe)
+    
+    return render(request, 'pages/recipe_form.html', {'form': form, 'title': '✏️ Редактирование рецепта'})
