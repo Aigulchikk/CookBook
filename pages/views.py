@@ -1,40 +1,15 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from .models import Recipe
-from .forms import FeedbackForm, RecipeForm, CommentForm
-from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.contrib.auth import logout
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from .models import Recipe, Tag
+from .forms import RecipeForm, CommentForm, FeedbackForm
+from django.contrib.auth.views import LogoutView
+from django.contrib.auth.forms import UserCreationForm
 
-def index(request, category_slug=None):
-    recipes = Recipe.objects.all().order_by('-created_at')
-    current_category = None
-
-    if category_slug:
-        if category_slug == 'salad':
-            recipes = recipes.filter(category='salad')
-            current_category = '🥗 Салаты'
-        elif category_slug == 'soup':
-            recipes = recipes.filter(category='soup')
-            current_category = '🍲 Супы'
-        elif category_slug == 'main':
-            recipes = recipes.filter(category='main')
-            current_category = '🍝 Горячее'
-        elif category_slug == 'dessert':
-            recipes = recipes.filter(category='dessert')
-            current_category = '🍰 Десерты'
-
-    context = {
-        'welcome_text': 'Добро пожаловать в CookBook',
-        'description': 'Твой личный сервис для создания и хранения лучших рецептов.',
-        'button_text': 'Начать готовить',
-        'year': 2026,
-        'recipes': recipes,
-        'current_category': current_category,
-    }
-    return render(request, 'pages/index.html', context)
 
 def about(request):
     context = {
@@ -44,14 +19,6 @@ def about(request):
         'year': 2026,
     }
     return render(request, 'pages/about.html', context)
-
-def recipe_detail(request, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    context = {
-        'recipe': recipe,
-        'comment_form': CommentForm(),
-    }
-    return render(request, 'pages/recipe_detail.html', context)
 
 def contact(request):
     if request.method == 'POST':
@@ -72,49 +39,8 @@ def contact(request):
     return render(request, 'pages/contact.html', {'form': form})
 
 @login_required
-def recipe_create(request):
-    if request.method == 'POST':
-        form = RecipeForm(request.POST, request.FILES)
-        if form.is_valid():
-            recipe = form.save(commit=False)
-            recipe.author = request.user
-            recipe.save()
-            return redirect('recipe_detail', recipe_id=recipe.id)
-    else:
-        form = RecipeForm()
-    
-    return render(request, 'pages/recipe_form.html', {'form': form, 'title': '➕ Добавление рецепта'})
-
-@login_required
-def recipe_edit(request, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-
-    if recipe.author != request.user:
-        messages.error(request, 'Вы можете редактировать только свои рецепты!')
-        return redirect('recipe_detail', recipe_id=recipe.id)
-    
-    if request.method == 'POST':
-        form = RecipeForm(request.POST, request.FILES, instance=recipe)
-        if form.is_valid():
-            form.save()
-            return redirect('recipe_detail', recipe_id=recipe.id)
-    else:
-        form = RecipeForm(instance=recipe)
-    
-    return render(request, 'pages/recipe_form.html', {'form': form, 'title': '✏️ Редактирование рецепта'})
-
-class RegisterView(CreateView):
-    template_name = 'registration/register.html'
-    form_class = UserCreationForm
-    success_url = reverse_lazy('login')
-
-def custom_logout(request):
-    logout(request)
-    return redirect('home')
-
-@login_required
-def add_comment(request, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
+def add_comment(request, pk):
+    recipe = get_object_or_404(Recipe, pk=pk)
     
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -125,6 +51,114 @@ def add_comment(request, recipe_id):
             comment.save()
             messages.success(request, '✅ Ваш комментарий добавлен!')
         else:
-            messages.error(request, '❌ Ошибка при добавлении комментария. Текст не может быть пустым.')
+            messages.error(request, '❌ Ошибка при добавлении комментария.')
     
-    return redirect('recipe_detail', recipe_id=recipe.id)
+    return redirect('recipe_detail', pk=pk)
+
+class HomeView(ListView):
+    model = Recipe
+    template_name = 'pages/index.html'
+    context_object_name = 'recipes'
+    ordering = ['-created_at']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['welcome_text'] = 'Добро пожаловать в CookBook'
+        context['description'] = 'Твой личный сервис для создания и хранения лучших рецептов.'
+        context['button_text'] = 'Начать готовить'
+        context['year'] = 2026
+        return context
+    
+class CategoryView(ListView):
+    model = Recipe
+    template_name = 'pages/index.html'
+    context_object_name = 'recipes'
+    ordering = ['-created_at']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        category_slug = self.kwargs.get('category_slug')
+        if category_slug == 'salad':
+            return queryset.filter(category='salad')
+        elif category_slug == 'soup':
+            return queryset.filter(category='soup')
+        elif category_slug == 'main':
+            return queryset.filter(category='main')
+        elif category_slug == 'dessert':
+            return queryset.filter(category='dessert')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['welcome_text'] = 'Добро пожаловать в CookBook'
+        context['description'] = 'Твой личный сервис для создания и хранения лучших рецептов.'
+        context['button_text'] = 'Начать готовить'
+        context['year'] = 2026
+        return context
+
+class RecipeDetailView(DetailView):
+    model = Recipe
+    template_name = 'pages/recipe_detail.html'
+    context_object_name = 'recipe'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
+
+class RecipeCreateView(LoginRequiredMixin, CreateView):
+    model = Recipe
+    form_class = RecipeForm
+    template_name = 'pages/recipe_form.html'
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, '✅ Рецепт успешно создан!')
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = '➕ Добавление рецепта'
+        return context
+
+class RecipeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Recipe
+    form_class = RecipeForm
+    template_name = 'pages/recipe_form.html'
+    success_url = reverse_lazy('home')
+
+    def test_func(self):
+        recipe = self.get_object()
+        return self.request.user == recipe.author
+
+    def form_valid(self, form):
+        messages.success(self.request, '✅ Рецепт успешно обновлён!')
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = '✏️ Редактирование рецепта'
+        return context
+
+class RecipeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Recipe
+    template_name = 'pages/recipe_confirm_delete.html'
+    success_url = reverse_lazy('home')
+
+    def test_func(self):
+        recipe = self.get_object()
+        return self.request.user == recipe.author
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, '🗑️ Рецепт успешно удалён!')
+        return super().delete(request, *args, **kwargs)
+    
+class RegisterView(CreateView):
+    template_name = 'registration/register.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+
+def custom_logout(request):
+    logout(request)
+    return redirect('home')

@@ -1,0 +1,27 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Удаление рецепта - CookBook{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-5 text-center">
+                    <h1 class="mb-4">🗑️ Удаление рецепта</h1>
+                    <p class="lead mb-4">Вы уверены, что хотите удалить рецепт <strong>"{{ recipe.title }}"</strong>?</p>
+                    <p class="text-danger mb-4">Это действие нельзя отменить!</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-outline-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-danger">Да, удалить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

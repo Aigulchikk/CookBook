@@ -10,6 +10,7 @@
                 <a href="{% url 'home' %}" class="btn btn-outline-secondary">← Назад к рецептам</a>
                 {% if user.is_authenticated and recipe.author == user %}
                     <a href="{% url 'recipe_edit' recipe.id %}" class="btn btn-outline-primary ms-2">✏️ Редактировать</a>
+                    <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-outline-danger ms-2">🗑️ Удалить</a>
                 {% endif %}
             </div>
             

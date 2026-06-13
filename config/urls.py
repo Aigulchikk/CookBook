@@ -17,26 +17,38 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from pages import views
-from pages.views import RegisterView, custom_logout
+from pages.views import RegisterView, custom_logout, HomeView, RecipeDetailView, RecipeCreateView, RecipeUpdateView, RecipeDeleteView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    # Админка
     path('admin/', admin.site.urls),
+    
+    # Аутентификация
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/logout/', custom_logout, name='logout'),
-    path('', views.index, name='home'),
-    path('category/<slug:category_slug>/', views.index, name='category'),
-    path('about/', views.about, name='about'),
-    path('recipe/<int:recipe_id>/', views.recipe_detail, name='recipe_detail'),
-    path('contact/', views.contact, name='contact'),
-    path('recipe/create/', views.recipe_create, name='recipe_create'),
-    path('recipe/<int:recipe_id>/edit/', views.recipe_edit, name='recipe_edit'),
     path('accounts/register/', RegisterView.as_view(), name='register'),
-    path('recipe/<int:recipe_id>/comment/', views.add_comment, name='add_comment'),
+    
+    # Главная и детальные
+    path('', HomeView.as_view(), name='home'),
+    path('recipe/<int:pk>/', RecipeDetailView.as_view(), name='recipe_detail'),
+    
+    # CRUD рецептов
+    path('recipe/create/', RecipeCreateView.as_view(), name='recipe_create'),
+    path('recipe/<int:pk>/edit/', RecipeUpdateView.as_view(), name='recipe_edit'),
+    path('recipe/<int:pk>/delete/', RecipeDeleteView.as_view(), name='recipe_delete'),
+    
+    # Комментарии
+    path('recipe/<int:pk>/comment/', views.add_comment, name='add_comment'),
+    
+    # Статические страницы
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+
+    #Категории
+    path('category/<slug:category_slug>/', views.CategoryView.as_view(), name='category'),
 ]
 
-print("DEBUG mode:", settings.DEBUG)
-print("MEDIA_URL:", settings.MEDIA_URL)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
