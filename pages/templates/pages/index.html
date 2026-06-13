@@ -51,7 +51,7 @@
                     {% elif recipe.category == 'dessert' %}border-info border-3
                     {% endif %}
                 ">
-                    <img src="{% if recipe.image_url %}{{ recipe.image_url }}{% else %}https://placehold.co/400x250?text={{ recipe.title|urlencode }}{% endif %}" class="card-img-top" alt="{{ recipe.title }}">
+                    <img src="{% if recipe.image %}{{ recipe.image.url }}{% else %}https://placehold.co/400x250?text={{ recipe.title|urlencode }}{% endif %}" class="card-img-top" alt="{{ recipe.title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ recipe.title }}</h5>
                         <p class="card-text">{{ recipe.description|truncatewords:15 }}</p>
@@ -59,6 +59,17 @@
                         {% if recipe.author %}
                             <p class="text-muted small">👨‍🍳 {{ recipe.author.username }}</p>
                         {% endif %}
+                        {% if recipe.tags.exists %}
+                            <div class="mb-2">
+                                {% for tag in recipe.tags.all|slice:":3" %}
+                                    <span class="badge bg-secondary me-1" style="font-size: 0.7rem;">{{ tag.name }}</span>
+                                {% endfor %}
+                                {% if recipe.tags.count > 3 %}
+                                    <span class="badge bg-secondary me-1" style="font-size: 0.7rem;">+{{ recipe.tags.count|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                       
                         <span class="badge 
                             {% if recipe.category == 'salad' %}bg-success
                             {% elif recipe.category == 'soup' %}bg-warning text-dark

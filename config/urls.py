@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from pages import views
 from pages.views import RegisterView, custom_logout
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,3 +34,8 @@ urlpatterns = [
     path('recipe/<int:recipe_id>/edit/', views.recipe_edit, name='recipe_edit'),
     path('accounts/register/', RegisterView.as_view(), name='register'),
 ]
+
+print("DEBUG mode:", settings.DEBUG)
+print("MEDIA_URL:", settings.MEDIA_URL)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

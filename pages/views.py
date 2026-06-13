@@ -73,10 +73,10 @@ def contact(request):
 @login_required
 def recipe_create(request):
     if request.method == 'POST':
-        form = RecipeForm(request.POST)
+        form = RecipeForm(request.POST, request.FILES)
         if form.is_valid():
             recipe = form.save(commit=False)
-            recipe.author = request.user  # 👈 добавить
+            recipe.author = request.user
             recipe.save()
             return redirect('recipe_detail', recipe_id=recipe.id)
     else:
@@ -93,7 +93,7 @@ def recipe_edit(request, recipe_id):
         return redirect('recipe_detail', recipe_id=recipe.id)
     
     if request.method == 'POST':
-        form = RecipeForm(request.POST, instance=recipe)
+        form = RecipeForm(request.POST, request.FILES, instance=recipe)
         if form.is_valid():
             form.save()
             return redirect('recipe_detail', recipe_id=recipe.id)

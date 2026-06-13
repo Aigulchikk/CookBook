@@ -10,7 +10,7 @@
                 <div class="card-body p-5">
                     <h1 class="text-center mb-4">{{ title }}</h1>
                     
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         
                         {% for field in form %}
@@ -22,6 +22,13 @@
                                 {% endif %}
                             </label>
                             {{ field }}
+
+                            {% if field.name == 'tags' %}
+                                <small class="form-text text-muted">
+                                    💡 Для выбора нескольких тегов зажмите Ctrl (Cmd на Mac) и кликайте по нужным тегам
+                                </small>
+                            {% endif %}
+
                             {% if field.errors %}
                                 <div class="alert alert-danger mt-2">
                                     {{ field.errors }}

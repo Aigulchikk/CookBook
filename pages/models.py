@@ -16,8 +16,9 @@ class Recipe(models.Model):
     cooking_time = models.IntegerField(verbose_name="Время приготовления (мин)", default=30)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     category = models.CharField(max_length=10, choices=Category.choices, default=Category.MAIN, verbose_name="Категория")
-    image_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="URL изображения")
+    image = models.ImageField(upload_to='recipes/', blank=True, null=True, verbose_name="Изображение")
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Автор")
+    tags = models.ManyToManyField('Tag', blank=True, related_name='recipes', verbose_name="Теги")
 
     def __str__(self):
         return self.title
@@ -28,3 +29,13 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True, verbose_name="Название тега")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"

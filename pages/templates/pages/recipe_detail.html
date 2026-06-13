@@ -8,11 +8,13 @@
         <div class="col-12">
             <div class="mb-4">
                 <a href="{% url 'home' %}" class="btn btn-outline-secondary">← Назад к рецептам</a>
-                <a href="{% url 'recipe_edit' recipe.id %}" class="btn btn-outline-primary ms-2">✏️ Редактировать</a>
+                {% if user.is_authenticated and recipe.author == user %}
+                    <a href="{% url 'recipe_edit' recipe.id %}" class="btn btn-outline-primary ms-2">✏️ Редактировать</a>
+                {% endif %}
             </div>
             
-            {% if recipe.image_url %}
-                <img src="{{ recipe.image_url }}" class="img-fluid rounded mb-4" alt="{{ recipe.title }}">
+            {% if recipe.image %}
+                <img src="{{ recipe.image.url }}" class="img-fluid rounded mb-4" alt="{{ recipe.title }}">
             {% endif %}
             
             <h1 class="mb-4">{{ recipe.title }}</h1>
@@ -50,6 +52,21 @@
                 </div>
                 <div class="card-body">
                     <p>{{ recipe.instructions|linebreaks }}</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>🏷️ Теги</h4>
+                </div>
+                <div class="card-body">
+                    {% if recipe.tags.exists %}
+                        {% for tag in recipe.tags.all %}
+                            <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Нет тегов</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
