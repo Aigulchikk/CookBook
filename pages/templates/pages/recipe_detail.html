@@ -70,6 +70,48 @@
                 </div>
             </div>
         </div>
+
+        <!-- БЛОК КОММЕНТАРИЕВ -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>💬 Комментарии ({{ recipe.comments.count }})</h4>
+            </div>
+            <div class="card-body">
+                {% for comment in recipe.comments.all %}
+                    <div class="border-bottom mb-3 pb-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>👤 {{ comment.author.username }}</strong>
+                            <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                        </div>
+                        <p class="mt-2 mb-0">{{ comment.text|linebreaks }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Пока нет комментариев. Будьте первым!</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ФОРМА ДОБАВЛЕНИЯ КОММЕНТАРИЯ -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>✏️ Оставить комментарий</h4>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'add_comment' recipe.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ comment_form.text }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Отправить комментарий</button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-info">
+                        <a href="{% url 'login' %}" class="alert-link">Войдите</a>, чтобы оставить комментарий.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Recipe
-from .forms import FeedbackForm, RecipeForm
+from .forms import FeedbackForm, RecipeForm, CommentForm
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
@@ -49,6 +49,7 @@ def recipe_detail(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     context = {
         'recipe': recipe,
+        'comment_form': CommentForm(),
     }
     return render(request, 'pages/recipe_detail.html', context)
 
@@ -110,3 +111,20 @@ class RegisterView(CreateView):
 def custom_logout(request):
     logout(request)
     return redirect('home')
+
+@login_required
+def add_comment(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.recipe = recipe
+            comment.author = request.user
+            comment.save()
+            messages.success(request, '✅ Ваш комментарий добавлен!')
+        else:
+            messages.error(request, '❌ Ошибка при добавлении комментария. Текст не может быть пустым.')
+    
+    return redirect('recipe_detail', recipe_id=recipe.id)

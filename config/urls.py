@@ -33,6 +33,7 @@ urlpatterns = [
     path('recipe/create/', views.recipe_create, name='recipe_create'),
     path('recipe/<int:recipe_id>/edit/', views.recipe_edit, name='recipe_edit'),
     path('accounts/register/', RegisterView.as_view(), name='register'),
+    path('recipe/<int:recipe_id>/comment/', views.add_comment, name='add_comment'),
 ]
 
 print("DEBUG mode:", settings.DEBUG)
